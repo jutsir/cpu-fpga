@@ -1,0 +1,17 @@
+# Ignore any working Vivado folders in any places
+**/vivado_prj/
+
+# Ignore temporary fails and Vivado logs in any subfolders
+*.log
+*.jou
+*.str
+.Xil/
+
+# Ignore folders
+.antigravitycli
+backup/
+template/
+
+# Ignore IDEs
+.vscode/
+.idea/

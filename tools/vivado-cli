@@ -1,0 +1,230 @@
+#!/bin/bash
+
+# Vivado executable full path
+VIVADO_BIN="/opt/Xilinx/Vivado/2024.2/bin/vivado"
+
+# FPGA board model target for openFPGALoader
+FPGA_BOARD="nexys_a7_100"
+
+# Parallel compilation jobs for Vivado build
+VIVADO_JOBS=4
+
+# Derive the project name from the current working directory
+PROJ_NAME=$(basename "$PWD")
+TARGET_FILE="./build_project.tcl"
+
+# Function to display the help/usage message
+show_help() {
+    echo "Vivado Cli Management Tool (v2024.2 Friendly)"
+    echo "Usage: $(basename "$0") [options]"
+    echo ""
+    echo "Options:"
+    echo "  -e, --export       Open local project and export it to a Git-friendly '$TARGET_FILE'"
+    echo "  -i, --import       Recreate the Vivado project from '$TARGET_FILE' (Batch mode)"
+    echo "  -b, --build        Build project and generate bitstream (Batch mode)"
+    echo "  -l, --load         [file] Load bitstream to volatile FPGA memory"
+    echo "  -lf, --load-flash  [file] Load bitstream to non-volatile FPGA flash"
+    echo "  -h, --help         Show this help message"
+    echo ""
+    echo "Example:"
+    echo "  $(basename "$0") --export"
+    echo ""
+    echo "Note for programming options (-l / -lf):"
+    echo "  If [file] is not provided, the script will automatically attempt"
+    echo "  to find the appropriate compiled .bit file in your workspace."
+    echo ""
+    echo "Requirements:"
+    echo "  * Xilinx Vivado (v2024.2 recommended)"
+    echo "  * openFPGALoader (required for programming options -l and -lf)"
+    echo "    For installation details, visit: https://github.com/trabucayre/openFPGALoader"
+}
+
+# Function to handle project export
+export_project() {
+    if [ ! -d "vivado_prj" ]; then
+        echo "❌ Error: 'vivado_prj' directory not found."
+        echo "Ensure you are in the project root folder (e.g., ~/Work/Xilinx24/EC2/)"
+        exit 1
+    fi
+
+    # Dynamically discover the .xpr project file
+    XPR_FILE=$(find ./vivado_prj -maxdepth 1 -name "*.xpr" 2>/dev/null | head -n 1)
+    if [ -n "$XPR_FILE" ]; then
+        PROJ_NAME=$(basename "$XPR_FILE" .xpr)
+    else
+        echo "❌ Error: No Vivado project (.xpr) file found in 'vivado_prj/'."
+        exit 1
+    fi
+
+    echo "=== Exporting Vivado project: $PROJ_NAME ==="
+    
+    # Feed Tcl commands directly into Vivado (removed redundant 'cd ..')
+    $VIVADO_BIN -mode tcl -notrace << EOF
+open_project ./vivado_prj/${PROJ_NAME}.xpr
+write_project_tcl -paths_relative_to . -no_copy_sources -force $TARGET_FILE
+exit
+EOF
+
+    if [ -f "$TARGET_FILE" ]; then
+        # Fix directory duplication inside the generated script
+        sed -i 's|\./\${_xil_proj_name_}|\./vivado_prj|g' "$TARGET_FILE"
+        
+        # Remove absolute home directory paths from the informational comments header dynamically
+        sed -i "\|${HOME}|d" "$TARGET_FILE"
+        
+        echo "✔ $TARGET_FILE successfully generated and sanitized!"
+    else
+        echo "❌ Error: Failed to generate $TARGET_FILE."
+        exit 1
+    fi
+}
+
+# Function to handle project restoration
+import_project() {
+    if [ ! -f "$TARGET_FILE" ]; then
+        echo "❌ Error: '$TARGET_FILE' not found in the current directory."
+        echo "Cannot recreate the project without the Tcl build script."
+        exit 1
+    fi
+
+    # Dynamically extract the project name from build_project.tcl if set
+    if grep -q 'set _xil_proj_name_' "$TARGET_FILE"; then
+        PROJ_NAME=$(grep 'set _xil_proj_name_' "$TARGET_FILE" | head -n 1 | cut -d'"' -f2)
+    fi
+
+    echo "=== Recreating Vivado project: $PROJ_NAME ==="
+    
+    # Run Vivado in batch mode to reconstruct the project from the Tcl script
+    $VIVADO_BIN -mode batch -source "$TARGET_FILE" -tclargs --origin_dir "$PWD"
+    
+    if [ -d "vivado_prj" ]; then
+        echo "✔ Vivado project successfully recreated in './vivado_prj/'!"
+    else
+        echo "❌ Error: Vivado finished, but 'vivado_prj' directory was not created."
+        exit 1
+    fi
+}
+
+# Function to handle project build and bitstream generation
+build_project() {
+    if [ ! -d "vivado_prj" ]; then
+        echo "❌ Error: 'vivado_prj' directory not found."
+        echo "Ensure you are in the project root folder (e.g., ~/Work/Xilinx24/EC2/)"
+        exit 1
+    fi
+
+    # Dynamically discover the .xpr project file
+    XPR_FILE=$(find ./vivado_prj -maxdepth 1 -name "*.xpr" 2>/dev/null | head -n 1)
+    if [ -n "$XPR_FILE" ]; then
+        PROJ_NAME=$(basename "$XPR_FILE" .xpr)
+    else
+        echo "❌ Error: No Vivado project (.xpr) file found in 'vivado_prj/'."
+        exit 1
+    fi
+
+    echo "=== Building Vivado project and generating bitstream: $PROJ_NAME ==="
+    
+    # Feed Tcl commands directly into Vivado (batch compilation and bitstream generation)
+    $VIVADO_BIN -mode tcl -notrace << EOF
+open_project ./vivado_prj/${PROJ_NAME}.xpr
+reset_run synth_1
+reset_run impl_1
+launch_runs impl_1 -to_step write_bitstream -jobs $VIVADO_JOBS
+wait_on_run impl_1
+exit
+EOF
+    
+    if [ $? -eq 0 ]; then
+        echo "✔ Bitstream generation command completed successfully!"
+        BIT_FILE="./vivado_prj/${PROJ_NAME}.runs/impl_1/${PROJ_NAME}.bit"
+        if [ -f "$BIT_FILE" ]; then
+            size=$(du -sh "$BIT_FILE" | cut -f1)
+            echo "Generated bitstream: $BIT_FILE ($size)"
+        else
+            # Search fallback in case of different runs or naming
+            BIT_FILE=$(find "./vivado_prj/${PROJ_NAME}.runs/impl_1" -name "*.bit" 2>/dev/null | head -n 1)
+            if [ -n "$BIT_FILE" ]; then
+                size=$(du -sh "$BIT_FILE" | cut -f1)
+                echo "Generated bitstream: $BIT_FILE ($size)"
+            fi
+        fi
+    else
+        echo "❌ Error: Bitstream generation failed."
+        exit 1
+    fi
+}
+
+# Function to load bitstream file to the FPGA volatile memory
+load_fpga() {
+    local bitstream="$1"
+    if [ -z "$bitstream" ]; then
+        # Dynamically discover the .xpr project file to find project name
+        XPR_FILE=$(find ./vivado_prj -maxdepth 1 -name "*.xpr" 2>/dev/null | head -n 1)
+        if [ -n "$XPR_FILE" ]; then
+            PROJ_NAME=$(basename "$XPR_FILE" .xpr)
+            bitstream=$(find "./vivado_prj/${PROJ_NAME}.runs/impl_1" -name "*.bit" 2>/dev/null | head -n 1)
+        fi
+        
+        # Fallback: search for any .bit file in the workspace
+        if [ -z "$bitstream" ] || [ ! -f "$bitstream" ]; then
+            bitstream=$(find . -name "*.bit" ! -path "*/.antigravitycli/*" 2>/dev/null | head -n 1)
+        fi
+    fi
+
+    echo "=== Loading bitstream to FPGA volatile memory: $bitstream ==="
+    openFPGALoader -b "$FPGA_BOARD" "$bitstream"
+}
+
+# Function to load bitstream file to the FPGA flash memory
+load_flash_fpga() {
+    local bitstream="$1"
+    if [ -z "$bitstream" ]; then
+        # Dynamically discover the .xpr project file to find project name
+        XPR_FILE=$(find ./vivado_prj -maxdepth 1 -name "*.xpr" 2>/dev/null | head -n 1)
+        if [ -n "$XPR_FILE" ]; then
+            PROJ_NAME=$(basename "$XPR_FILE" .xpr)
+            bitstream=$(find "./vivado_prj/${PROJ_NAME}.runs/impl_1" -name "*.bit" 2>/dev/null | head -n 1)
+        fi
+        
+        # Fallback: search for any .bit file in the workspace
+        if [ -z "$bitstream" ] || [ ! -f "$bitstream" ]; then
+            bitstream=$(find . -name "*.bit" ! -path "*/.antigravitycli/*" 2>/dev/null | head -n 1)
+        fi
+    fi
+
+    echo "=== Loading bitstream to FPGA flash memory: $bitstream ==="
+    openFPGALoader -b "$FPGA_BOARD" -f "$bitstream"
+}
+
+# Check if no arguments were provided
+if [ $# -eq 0 ]; then
+    show_help
+    exit 0
+fi
+
+# Parse command-line arguments
+case "$1" in
+    -e|--export)
+        export_project
+        ;;
+    -i|--import)
+        import_project
+        ;;
+    -b|--build)
+        build_project
+        ;;
+    -l|--load)
+        load_fpga "$2"
+        ;;
+    -lf|--load-flash)
+        load_flash_fpga "$2"
+        ;;
+    -h|--help)
+        show_help
+        ;;
+    *)
+        echo "❌ Error: Invalid option '$1'"
+        show_help
+        exit 1
+        ;;
+esac
