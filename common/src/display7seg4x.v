@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: 
+// Engineer: Juri Tsirihhov
 // 
 // Create Date: 05/09/2026 01:25:32 AM
 // Design Name: 
@@ -9,7 +9,9 @@
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
-// Description: 
+// Description: Multiplexes four 7-segment displays to display an 8-bit binary
+//              number in decimal, supporting negative numbers (signed mode)
+//              and anode control.
 // 
 // Dependencies: 
 // 

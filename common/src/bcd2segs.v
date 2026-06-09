@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: 
+// Engineer: Juri Tsirihhov
 // 
 // Create Date: 05/09/2026 01:07:56 AM
 // Design Name: 
@@ -9,7 +9,9 @@
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
-// Description: 
+// Description: Decodes a 4-bit Binary Coded Decimal (BCD) input into 8-bit
+//              segment control signals (active-low) for a common anode
+//              7-segment display.
 // 
 // Dependencies: 
 // 

@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: 
+// Engineer: Juri Tsirihhov
 // 
 // Create Date: 05/09/2026 12:52:53 AM
 // Design Name: 
@@ -9,7 +9,9 @@
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
-// Description: 
+// Description: Converts an 8-bit binary number to three BCD digits using
+//              the Double Dabble algorithm, with optional signed input
+//              support.
 // 
 // Dependencies: 
 // 

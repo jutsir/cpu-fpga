@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: 
+// Engineer: Juri Tsirihhov
 // 
 // Create Date: 05/09/2026 02:53:22 AM
 // Design Name: 
@@ -9,7 +9,9 @@
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
-// Description: 
+// Description: Top-level System-on-Chip (SoC) integrating the EC2 processor,
+//              RAM, clock divider, reset synchronizer, button processor, and
+//              7-segment display subsystem.
 // 
 // Dependencies: 
 // 

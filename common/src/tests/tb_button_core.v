@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: 
+// Engineer: Juri Tsirihhov
 // 
 // Create Date: 05/16/2026 01:01:40 AM
 // Design Name: 
@@ -9,7 +9,8 @@
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
-// Description: 
+// Description: Testbench for verifying the debouncer and edge-detector
+//              (button_core) module.
 // 
 // Dependencies: 
 // 

@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: 
+// Engineer: Juri Tsirihhov
 // 
 // Create Date: 05/09/2026 02:01:08 AM
 // Design Name: 
@@ -9,7 +9,9 @@
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
-// Description: 
+// Description: Top-level module wrapping the 7-segment display subsystem,
+//              incorporating a clock divider and the multiplexed display
+//              driver.
 // 
 // Dependencies: 
 // 

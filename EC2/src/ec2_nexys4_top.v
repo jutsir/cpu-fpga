@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: 
+// Engineer: Juri Tsirihhov
 // 
 // Create Date: 05/09/2026 03:12:25 AM
 // Design Name: 
@@ -9,7 +9,9 @@
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
-// Description: 
+// Description: Top-level wrapper mapping physical Nexys 4 DDR FPGA board
+//              pins (clock, reset, button, switches, LEDs, and 7-segment
+//              display digits) to the logical EC2 SoC ports.
 // 
 // Dependencies: 
 // 

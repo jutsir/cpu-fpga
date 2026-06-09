@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: 
+// Engineer: Juri Tsirihhov
 // 
 // Create Date: 05/14/2026 10:59:59 PM
 // Design Name: 
@@ -9,7 +9,8 @@
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
-// Description: System-level testbench specifically for Juri's Nexys 4 Top.
+// Description: System-level testbench for the EC2 SoC mapping on the Nexys 4
+//              DDR FPGA board, simulating switch inputs and display outputs.
 // 
 // Dependencies: 
 // 

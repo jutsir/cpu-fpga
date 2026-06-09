@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: 
+// Engineer: Juri Tsirihhov
 // 
 // Create Date: 05/07/2026 11:52:51 PM
 // Design Name: 
@@ -9,7 +9,8 @@
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
-// Description: 
+// Description: Parameterizable single-port RAM block with synchronous write
+//              and asynchronous read logic.
 // 
 // Dependencies: 
 // 
@@ -45,7 +46,7 @@ module ram
     end // always
     
     // read
-    always @ (Address) begin
-      Q <= mem[Address];
+    always @(*) begin
+      Q = mem[Address];
     end
 endmodule

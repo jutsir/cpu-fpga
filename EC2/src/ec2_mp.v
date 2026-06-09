@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: 
+// Engineer: Juri Tsirihhov
 // 
 // Create Date: 05/08/2026 12:51:55 AM
 // Design Name: 
@@ -9,7 +9,8 @@
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
-// Description: 
+// Description: 8-bit microprocessor (EC2) implementing an ISA of 8
+//              instructions: LOAD, STORE, ADD, SUB, IN, JZ, JPOS, HALT.
 // 
 // Dependencies: 
 // 

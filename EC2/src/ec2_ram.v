@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: 
+// Engineer: Juri Tsirihhov
 // 
 // Create Date: 05/07/2026 11:52:51 PM
 // Design Name: 
@@ -9,7 +9,8 @@
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
-// Description: 
+// Description: Single-port RAM module (32 x 8-bit) initialized with sample
+//              EC2 programs (Countdown, Sum, or GCD) upon Reset.
 // 
 // Dependencies: 
 // 
