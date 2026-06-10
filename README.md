@@ -10,7 +10,7 @@ The implementations of the **EC2** and **EC2e** microprocessors are based on the
 
 Both processors use a basic accumulator-based architecture with an **8-bit word size** and a **5-bit address space** (addressing 32 bytes of internal RAM).
 
-For detailed instruction sets and implementation documentation, refer to the individual project READMEs.
+For detailed instruction sets and implementation documentation, see the individual project folders.
 
 ---
 
