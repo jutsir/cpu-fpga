@@ -1,6 +1,6 @@
 # CPU on FPGA: EC2 & EC2e Microprocessors
 
-This repository implements two custom educational 8-bit microprocessors, **EC2** and **EC2e** (Extended EC2), written in Verilog and targeted for deployment on the Digilent Nexys-4 DDR (Artix-7 XC7A100T) FPGA board. It includes the CPU designs, System-on-Chip (SoC) integration wrappers, peripheral drivers, and Vivado automation scripts.
+This repository implements two custom educational 8-bit microprocessors, **EC2** and **EC2e** (Extended EC2), written in Verilog and targeted for deployment on the **Digilent Nexys-4 DDR** (Artix-7 XC7A100T) FPGA board. It includes the CPU designs, System-on-Chip (SoC) integration wrappers, peripheral drivers, and Vivado automation scripts.
 
 The implementations of the **EC2** and **EC2e** microprocessors are based on the Finite State Machine with Datapath (FSMD) model presented in the textbook *Digital Logic and Microprocessor Design with Interfacing* (2nd Edition) by Enoch O. Hwang (ISBN: 978-1-305-85945-6).
 
