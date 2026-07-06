@@ -1,3 +1,8 @@
+> [!WARNING]
+> **This repository is deprecated.**
+> Further development of the CPU FPGA project has moved to the new repository: **[fpga-cpu](https://github.com/jutsir/fpga-cpu)**.
+> Please redirect all your bookmarks, issues, and pull requests there.
+
 # CPU on FPGA: EC2 & EC2e Microprocessors
 
 This repository implements two custom educational 8-bit microprocessors, **EC2** and **EC2e** (Extended EC2), written in Verilog and targeted for deployment on the **Digilent Nexys-4 DDR** (Artix-7 XC7A100T) FPGA board. It includes the CPU designs, System-on-Chip (SoC) integration wrappers, peripheral drivers, and Vivado automation scripts.
